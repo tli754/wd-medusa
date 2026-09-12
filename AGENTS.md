@@ -1,154 +1,78 @@
 # AGENTS.md
 
-## Overview
+Shared instructions for any coding agent (Claude Code, Codex, or otherwise) working in this repository. Tool-neutral; project knowledge itself lives under [`docs/`](docs/README.md), not here.
 
-Medusa DTC Starter — a Turborepo workspace monorepo containing a Medusa backend (`@medusajs/medusa` latest, Node 20+, PostgreSQL 15+) and an optional storefront (Next.js, Tanstack, etc...).
+## What this repository is
 
-## Directory Structure
+A Turborepo/pnpm monorepo: a Medusa v2 backend (`apps/backend`, `@dtc/backend`) and an optional Next.js storefront (`apps/storefront`, `@dtc/storefront`). **`apps/storefront` may not exist** — check before running storefront commands or assuming a full-stack change is possible. Full structure: [docs/development/repository-structure.md](docs/development/repository-structure.md).
 
-```text
-.
-├── apps/
-│   ├── backend/                  # Medusa application (@dtc/backend)
-│   │   ├── medusa-config.ts      # Medusa config: DB URL, CORS, secrets, modules
-│   │   ├── integration-tests/    # setup.js (Jest setupFiles) and http/*.spec.ts suites
-│   │   └── src/
-│   │       ├── admin/            # Admin dashboard extensions (widgets/, i18n/, routes)
-│   │       ├── api/              # API routes: api/store/*, api/admin/* (file-based)
-│   │       ├── jobs/             # Scheduled jobs
-│   │       ├── links/            # Module links between modules
-│   │       ├── migration-scripts/# Data migration scripts (e.g. initial-data-seed.ts)
-│   │       ├── modules/          # Custom modules (service + models + migrations)
-│   │       ├── subscribers/      # Event subscribers
-│   │       └── workflows/        # Workflows and workflow steps
-│   └── storefront/               # OPTIONAL storefront
-├── eslint.config.ts              # Root ESLint: @medusajs/eslint-plugin recommended
-├── turbo.json                    # Task graph: build, dev, start, lint, test, seed
-```
+## Repository navigation
 
-**`apps/storefront` is optional and may not exist.** It is skipped when the user chooses not to install it. Before running any storefront command, referencing storefront files, or assuming a full-stack change is possible, check that `apps/storefront/` exists. If it doesn't, the project is backend-only — do not scaffold it or suggest it was deleted by mistake.
+- Start at [docs/README.md](docs/README.md) — its "When working on…" table routes you to the right document(s) for a task (backend, storefront, a specific domain, deployment, etc.).
+- Each app may carry its own nested `AGENTS.md`; read the nearest one in the directory tree, since it takes precedence for that subtree.
+- Detect the package manager before running anything — see [docs/development/repository-structure.md](docs/development/repository-structure.md#package-manager-detection). Never introduce a second lockfile.
 
-Each app can have its own nested `AGENTS.md`; agents read the nearest one in the directory tree, so put app-specific context there rather than expanding this file.
+## Documentation routing
 
-## Package Manager
+| You are about to... | Read |
+|---|---|
+| Touch backend code (modules, routes, workflows) | [docs/architecture/backend.md](docs/architecture/backend.md) |
+| Touch storefront code | [docs/architecture/storefront.md](docs/architecture/storefront.md) |
+| Change a specific business domain (catalog, cart, orders, customers, payments, fulfillment) | the matching file in [docs/domains/](docs/README.md#when-working-on) |
+| Trace or change a multi-step flow (checkout, order processing, product import) | the matching file in [docs/workflows/](docs/README.md#when-working-on) |
+| Make an architectural change | [docs/decisions/README.md](docs/decisions/README.md) first, for any relevant prior ADR |
+| Run or configure the project | [docs/development/](docs/development/local-setup.md) |
+| Deploy or debug production | [docs/operations/](docs/operations/deployment.md) |
 
-**The package manager is chosen at install time and is not fixed.** Detect it before running anything, in this order:
+## Planning expectations
 
-1. The `packageManager` field in the root `package.json` (e.g. `"pnpm@10.11.1"`) — authoritative when present.
-2. The lockfile at the repo root: `pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, `package-lock.json` → npm.
+- Small, local, easily-reversible changes can proceed directly.
+- Anything touching more than one file, a shared pattern, a public API shape, or an external integration needs a short plan first — what will change, why, and what it affects — before editing.
+- Inspect the current implementation before planning a change to it. Do not plan against what a document says the code does; verify first, since documentation can lag the code.
 
-```bash
-node -p "require('./package.json').packageManager ?? 'unset'"
-ls pnpm-lock.yaml yarn.lock package-lock.json bun.lock bun.lockb 2>/dev/null
-```
+## Code ownership expectations
 
-Use that manager for every command and never introduce a second lockfile. Below, `<pm>` means the detected manager. The `<pm> run <script>` and `<pm> exec <bin>` forms work across npm, pnpm, yarn, and bun; workspace-filter flags do not, so the per-app commands below `cd` into the app instead.
+- Preserve module isolation, workflow-only mutations, and file-based routing (see [docs/development/coding-conventions.md](docs/development/coding-conventions.md)) — don't bypass a layer to save time.
+- Keep a change inside the domain/module boundary it belongs to. A checkout fix stays in checkout code; it doesn't reach into catalog or customer code unless the task requires it.
+- Stay within the requested scope. Don't refactor, rename, or "improve" adjacent code the task didn't ask about; flag it instead and let the user decide.
 
-## Commands
+## Testing and verification expectations
 
-Run from the repo root unless noted. Turbo skips missing apps automatically.
+- Run the build/lint/test commands relevant to what you changed ([docs/development/common-commands.md](docs/development/common-commands.md)) before calling work done.
+- As of this writing, this repository has package-script-level test commands but no actual test files (see [docs/development/testing.md](docs/development/testing.md)) — running them proving nothing failed is not the same as proving your change works. Say so plainly rather than implying coverage that doesn't exist.
+- New backend logic should ship with a test in the location the existing Jest globs expect, so coverage actually starts accumulating.
+- Never claim a task is complete, fixed, or passing without having run the verification that shows it.
 
-### Development
+## Documentation update rules
 
-```bash
-<pm> run dev                # all apps
-<pm> run backend:dev        # backend only (http://localhost:9000, admin at /app)
-<pm> run storefront:dev     # storefront only (http://localhost:8000)
-```
+- When you change behaviour that a `docs/` file describes, update that file in the same change — don't leave it to a follow-up.
+- Prefer editing the existing, authoritative document over creating a new one; prefer a relative link over copying a fact that already lives elsewhere in `docs/`.
+- Bump a changed document's `last_verified` date only when you actually re-checked its content against the code.
+- If you're not sure which document is affected, check [docs/README.md](docs/README.md)'s routing table.
 
-### Build
+## Handling conflicts
 
-```bash
-<pm> run build              # all apps
-<pm> run start              # build (via turbo dependsOn) then start
-```
+- Code, configuration, and tests are the source of truth. When a `docs/` file disagrees with the repository, trust the repository, fix the document, and say so — don't silently pick one or the other without noting the discrepancy.
+- When a user's instruction conflicts with a documented architectural boundary or a safety rule below (off-limits paths, destructive commands), say so and ask before proceeding, rather than silently complying or silently refusing.
+- Never invent a requirement, business rule, or command that isn't backed by the repository or an explicit instruction. If something is unknown, say it's unknown (and where in `docs/` that gap is already tracked) rather than filling it in with a plausible guess.
 
-### Lint
+## Common mistakes (see [docs/operations/troubleshooting.md](docs/operations/troubleshooting.md) for the full, evidenced list)
 
-```bash
-<pm> run lint                          # all apps via turbo
-cd apps/backend && <pm> run lint       # medusa lint
-cd apps/storefront && <pm> run lint    # next lint
-```
+- Running storefront commands without checking `apps/storefront/` exists.
+- Installing a dependency at the repo root instead of inside the app that needs it.
+- Editing a custom module's model without regenerating its migration.
+- Writing raw SQL or importing a DB client directly instead of going through module services/workflows.
+- Treating `pnpm run backend:seed` as working — it currently is not; see [docs/development/common-commands.md](docs/development/common-commands.md) for the working command.
+- Silencing a `@medusajs/*` ESLint rule instead of fixing the underlying pattern.
 
-### Test (backend only; the storefront has no test suite)
-
-```bash
-<pm> run test                                              # all test tasks via turbo
-cd apps/backend && <pm> run test:unit                      # **/src/**/__tests__/**/*.unit.spec.ts
-cd apps/backend && <pm> run test:integration:modules       # **/src/modules/*/__tests__/**
-cd apps/backend && <pm> run test:integration:http          # **/integration-tests/http/*.spec.ts
-```
-
-Single test — pass a path/pattern through to Jest, keeping `TEST_TYPE`:
-
-```bash
-cd apps/backend && <pm> run test:unit -- src/modules/foo/__tests__/service.unit.spec.ts
-cd apps/backend && <pm> run test:unit -- -t "returns the cart"
-```
-
-### Database
-
-```bash
-cd apps/backend
-<pm> exec medusa db:generate <module-name>   # generate migrations for a custom module
-<pm> exec medusa db:migrate                  # run migrations
-<pm> exec medusa user -e admin@test.com -p supersecret
-<pm> run backend:seed                        # from root; seeds initial data
-```
-
-## Medusa Skills & MCP Server
-
-These are optional but strongly recommended — they give documentation-backed answers instead of guesses about Medusa APIs. **Use them when available; if they are not, mention to the user that installing them meaningfully improves development on this project.**
-
-**Agentic skills** ([docs](https://docs.medusajs.com/learn/introduction/build-with-llms-ai/agentic-skills)) — if the `medusa-dev` skills are listed as available, load them *before* writing code, not after:
-
-- `building-with-medusa` — any backend work: modules, API routes, workflows, data models, module links
-- `building-admin-dashboard-customizations` — anything under `apps/backend/src/admin`
-- `building-storefronts` — anything under `apps/storefront`
-- `db-generate` / `db-migrate` / `new-user` — the DB and user commands above
-
-If they are not installed, suggest:
-
-```bash
-/plugin marketplace add medusajs/medusa-agent-skills
-/plugin install medusa-dev@medusa
-```
-
-**MCP server** ([docs](https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server)) — a `medusa` MCP server exposing the official docs. Prefer it over web search or memory for any Medusa API, config, or upgrade question. If it is not connected, suggest:
-
-```bash
-claude mcp add --transport http medusa https://docs.medusajs.com/mcp # or agent equivalent
-```
-
-## Code Style
-
-- **The backend must satisfy `@medusajs/eslint-plugin`'s recommended config** (`eslint.config.ts`). Its rules encode Medusa framework requirements — correct route/workflow/module shapes, not just cosmetics — so a lint failure usually means the code is actually wrong, not just badly formatted. Never disable a `@medusajs/*` rule to make lint pass; fix the code.
-- No semicolons. Double quotes, 2-space indent.
-- Files: kebab-case. Types/classes: PascalCase. Functions/variables: camelCase. DB columns: snake_case.
-- No emojis in code, comments, or commit messages.
-
-## Conventions
-
-- **Backend routing is file-based.** A store endpoint is `src/api/store/<path>/route.ts` exporting `GET`/`POST`/etc. Don't add a router or register routes manually.
-- **Business logic belongs in workflows**, not in route handlers. Routes resolve and run a workflow; workflows compose steps.
-- Adding a task to `turbo.json` requires declaring its `outputs`, or Turbo will cache nothing/the wrong thing.
-
-## Common Mistakes
-
-- Running storefront commands without checking that `apps/storefront/` exists.
-- Assuming a package manager instead of detecting it, or running a command that creates a second lockfile.
-- Installing a dependency at the root instead of inside the app that needs it (`cd apps/backend && <pm> add <pkg>`).
-- Editing a custom module's model without running `<pm> exec medusa db:generate <module>` — the migration is missing and the change silently never applies.
-- Writing raw SQL or importing DB clients directly in the backend instead of going through module services / workflows.
-- Calling the Medusa API from the storefront without `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`; requests fail with a publishable-key error, not an obvious 401.
-- Running the test task without a reachable PostgreSQL — integration suites need a live DB.
-- Silencing `@medusajs/*` ESLint rules instead of fixing the underlying pattern.
-
-## Off-Limits
+## Off-limits
 
 - `apps/backend/.medusa/`, `.next/`, `dist/`, `out/`, `.turbo/` — build output, excluded from the workspace and regenerated.
-- The lockfile (`pnpm-lock.yaml`, `yarn.lock`, `package-lock.json` — whichever this install produced) — never hand-edit or delete; change it only as a side effect of a package manager command.
+- The lockfile (`pnpm-lock.yaml` or whichever this install produced) — never hand-edit or delete; change it only as a side effect of a package manager command.
 - `.env` / `.env.local` — never commit, print, or copy secret values out of them. Edit `.env.template` instead when documenting a new variable.
 - Existing migrations in `src/modules/*/migrations/` — add a new migration rather than rewriting one that may already have run.
-- Don't run destructive DB commands (drops, `db:migrate --help`-style flags that reset state) against the user's database without explicit confirmation.
+- Destructive DB commands (drops, resets) against a database you don't own, without explicit confirmation.
+
+## Medusa skills & MCP server
+
+If the `medusa-dev` agent skills are available, load the relevant one *before* writing code — `building-with-medusa` for any backend work, `building-admin-dashboard-customizations` for `apps/backend/src/admin`, `building-storefronts` for `apps/storefront`. They contain architectural rules (workflow-only mutations, price formatting, query patterns) this file only summarizes. If a `medusa` MCP server exposing the official docs is connected, prefer it over web search or memory for Medusa API/config questions.
