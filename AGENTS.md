@@ -76,3 +76,10 @@ A Turborepo/pnpm monorepo: a Medusa v2 backend (`apps/backend`, `@dtc/backend`) 
 ## Medusa skills & MCP server
 
 If the `medusa-dev` agent skills are available, load the relevant one *before* writing code — `building-with-medusa` for any backend work, `building-admin-dashboard-customizations` for `apps/backend/src/admin`, `building-storefronts` for `apps/storefront`. They contain architectural rules (workflow-only mutations, price formatting, query patterns) this file only summarizes. If a `medusa` MCP server exposing the official docs is connected, prefer it over web search or memory for Medusa API/config questions.
+
+## Superpowers skill configuration
+
+The `superpowers` plugin's `brainstorming` and `writing-plans` skills default to saving design specs and implementation plans under `docs/superpowers/`. In this repo, use `docs/execution/` instead, and never create a `docs/superpowers/` (or top-level `superpowers/`) folder:
+
+- Specs: `docs/execution/specs/YYYY-MM-DD-<topic>-design.md`
+- Plans: `docs/execution/plans/YYYY-MM-DD-<feature-name>.md`
