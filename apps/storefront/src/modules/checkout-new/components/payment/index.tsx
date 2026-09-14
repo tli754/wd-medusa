@@ -28,7 +28,7 @@ const Payment = ({
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
     activeSession?.provider_id ?? ""
   )
-  const [paymentComplete, setPaymentComplete] = useState(false)
+  const [, setPaymentComplete] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isInitiating, setIsInitiating] = useState(false)
 
@@ -38,6 +38,8 @@ const Payment = ({
   const isOpen = searchParams.get("step") === "payment"
 
   const setPaymentMethod = async (method: string) => {
+    const previousMethod = selectedPaymentMethod
+
     setError(null)
     setSelectedPaymentMethod(method)
 
@@ -51,6 +53,7 @@ const Payment = ({
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
+      setSelectedPaymentMethod(previousMethod)
     } finally {
       setIsInitiating(false)
     }
@@ -71,7 +74,11 @@ const Payment = ({
       {isOpen && (
         <div>
           {availablePaymentMethods?.length ? (
-            <RadioGroup value={selectedPaymentMethod} onChange={setPaymentMethod}>
+            <RadioGroup
+              value={selectedPaymentMethod}
+              onChange={setPaymentMethod}
+              disabled={isInitiating}
+            >
               {availablePaymentMethods.map((paymentMethod) => (
                 <div key={paymentMethod.id}>
                   {isStripeLike(paymentMethod.id) ? (

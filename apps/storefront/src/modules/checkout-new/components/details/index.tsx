@@ -58,13 +58,29 @@ const Details = ({
     setError(null)
 
     try {
+      const trimmedName = fullName.trim()
+      const trimmedPhone = phone.trim()
+      const [firstName, ...rest] = trimmedName.split(" ")
+
+      const updatedAddress = cart.shipping_address
+        ? {
+            ...cart.shipping_address,
+            first_name: firstName || "",
+            last_name: rest.join(" "),
+            phone: trimmedPhone,
+          }
+        : undefined
+
       await updateCart({
         email,
         metadata: {
           ...cart.metadata,
-          checkout_full_name: fullName.trim(),
-          checkout_phone: phone.trim(),
+          checkout_full_name: trimmedName,
+          checkout_phone: trimmedPhone,
         },
+        ...(updatedAddress
+          ? { shipping_address: updatedAddress, billing_address: updatedAddress }
+          : {}),
       })
 
       router.push(pathname + "?step=delivery", { scroll: false })

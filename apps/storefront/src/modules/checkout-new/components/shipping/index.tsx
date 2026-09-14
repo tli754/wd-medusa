@@ -54,8 +54,17 @@ const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
   const isComplete =
     !!cart.shipping_address?.address_1 && (cart.shipping_methods?.length ?? 0) > 0
 
+  const metadata = (cart.metadata ?? {}) as Record<string, string>
+  const hasContactInfo = !!(
+    metadata.checkout_full_name && metadata.checkout_phone
+  )
+
   const handleEdit = () => {
     router.push(pathname + "?step=delivery", { scroll: false })
+  }
+
+  const handleBackToDetails = () => {
+    router.push(pathname + "?step=address", { scroll: false })
   }
 
   const fetchOptionsAndPrices = async () => {
@@ -88,6 +97,11 @@ const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
   }, [])
 
   const handleCalculateDelivery = async () => {
+    if (!hasContactInfo) {
+      setError("Please complete your contact details first.")
+      return
+    }
+
     if (!streetAddress.trim() || !city.trim() || !postcode.trim()) {
       setError("Street address, Town/City and Postcode are all required.")
       return
@@ -96,7 +110,6 @@ const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
     setError(null)
     setIsCalculating(true)
 
-    const metadata = (cart.metadata ?? {}) as Record<string, string>
     const [firstName, ...rest] = (metadata.checkout_full_name ?? "")
       .trim()
       .split(" ")
@@ -170,6 +183,21 @@ const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
         )}
       </div>
       {isOpen ? (
+        !hasContactInfo ? (
+          <div className="pb-8">
+            <Text className="text-ui-fg-muted mb-4">
+              Please complete your contact details before entering a delivery
+              address.
+            </Text>
+            <button
+              onClick={handleBackToDetails}
+              className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+              data-testid="back-to-details-button"
+            >
+              Back to details
+            </button>
+          </div>
+        ) : (
         <div className="pb-8">
           <div className="grid grid-cols-2 gap-4 mb-6">
             <Input
@@ -285,6 +313,7 @@ const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
             Continue to payment
           </Button>
         </div>
+        )
       ) : (
         <div className="text-small-regular">
           {isComplete && (
