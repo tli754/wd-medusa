@@ -41,20 +41,18 @@ const Payment = ({
     setError(null)
     setSelectedPaymentMethod(method)
 
-    if (isStripeLike(method)) {
-      setIsInitiating(true)
-      try {
-        await initiatePaymentSession(cart, { provider_id: method })
-        // This step never navigates to a new `?step=`, so nothing else
-        // forces the Server Component tree to refetch `cart`. Without this,
-        // PaymentWrapper's Stripe Elements client secret and PaymentButton's
-        // cart prop would stay stale (missing the session just created).
-        router.refresh()
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err))
-      } finally {
-        setIsInitiating(false)
-      }
+    setIsInitiating(true)
+    try {
+      await initiatePaymentSession(cart, { provider_id: method })
+      // This step never navigates to a new `?step=`, so nothing else
+      // forces the Server Component tree to refetch `cart`. Without this,
+      // PaymentWrapper's Stripe Elements client secret and PaymentButton's
+      // cart prop would stay stale (missing the session just created).
+      router.refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setIsInitiating(false)
     }
   }
 
