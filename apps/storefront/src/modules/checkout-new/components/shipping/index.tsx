@@ -80,6 +80,13 @@ const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
     }
   }
 
+  useEffect(() => {
+    if (cart.shipping_address?.address_1) {
+      fetchOptionsAndPrices()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const handleCalculateDelivery = async () => {
     if (!streetAddress.trim() || !city.trim() || !postcode.trim()) {
       setError("Street address, Town/City and Postcode are all required.")
