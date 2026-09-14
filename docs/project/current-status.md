@@ -39,11 +39,12 @@ related:
 |---|---|
 | `apps/backend/medusa-config.ts` | Adds `@rx-ventures/medusa-plugin-shopify-sync` to `plugins`, reading `SHOPIFY_SYNC_ENCRYPTION_KEY` from the environment. |
 | `apps/backend/package.json` | Adds `@rx-ventures/medusa-plugin-shopify-sync` as a dependency. |
-| `apps/storefront/src/app/[countryCode]/(checkout)/checkout/page.tsx` | Adds three debug `console.log` calls (cart and customer objects) — appears to be leftover debugging, not intentional behaviour. |
 | `.gitignore` | Adds `.idea` to ignored paths. |
 | `pnpm-lock.yaml` | Lockfile update reflecting the new dependency. |
 
-Recommendation: remove the debug `console.log`s from `checkout/page.tsx` before committing, and confirm whether the Shopify plugin wiring is ready to ship (`SHOPIFY_SYNC_ENCRYPTION_KEY` is not present in `apps/backend/.env.template` as of this writing — see [../architecture/integrations.md](../architecture/integrations.md)).
+Recommendation: confirm whether the Shopify plugin wiring is ready to ship (`SHOPIFY_SYNC_ENCRYPTION_KEY` is not present in `apps/backend/.env.template` as of this writing — see [../architecture/integrations.md](../architecture/integrations.md)).
+
+(A previous version of this table listed `apps/storefront/src/app/[countryCode]/(checkout)/checkout/page.tsx` as containing three uncommitted debug `console.log` calls. That is no longer true: those calls were removed before the custom-checkout branch, and that branch's implementation of `NEXT_PUBLIC_CHECKOUT_VARIANT` switching rewrote this file anyway. See [../architecture/storefront.md](../architecture/storefront.md).)
 
 ## Risks / blockers supported by evidence
 

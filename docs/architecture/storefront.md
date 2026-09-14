@@ -24,13 +24,13 @@ related:
 | Path | Responsibility |
 |---|---|
 | `src/app/[countryCode]/(main)/...` | Public browsing routes: home, products, collections, categories, cart, account, order. |
-| `src/app/[countryCode]/(checkout)/checkout/page.tsx` | The checkout page (address → shipping → payment → review steps). |
+| `src/app/[countryCode]/(checkout)/checkout/page.tsx` | The checkout page. Renders one of two switchable flows based on `NEXT_PUBLIC_CHECKOUT_VARIANT`: the original 4-step flow (address → shipping → payment → review, `src/modules/checkout`) by default, or a 3-step flow (details → shipping → payment, `src/modules/checkout-new`) when set to `"new"`. See [../execution/specs/2026-09-12-custom-checkout-design.md](../execution/specs/2026-09-12-custom-checkout-design.md). |
 | `src/app/api/payment-return/route.ts` | A Next.js Route Handler that Stripe redirects back to after off-site payment authorization; completes the cart into an order. See [../workflows/checkout.md](../workflows/checkout.md). |
 | `src/middleware.ts` | Runs on every request (Next.js Edge middleware); resolves the visitor's region from `/store/regions` and redirects to a country-code-prefixed path (e.g. `/` → `/dk`), caching the region map for one hour. |
 | `src/lib/config.ts` | Instantiates the single `@medusajs/js-sdk` client (`sdk`) used for all backend calls; wraps `sdk.client.fetch` to also forward a locale header. |
 | `src/lib/data/*.ts` | Server actions/functions per domain (`cart.ts`, `customer.ts`, `orders.ts`, `products.ts`, `payment.ts`, `fulfillment.ts`, `regions.ts`, `collections.ts`, `categories.ts`, `variants.ts`, `onboarding.ts`, `cookies.ts`, `locales.ts`). Each wraps `sdk.client.fetch` or `sdk.store.*` calls; most are marked `"use server"`. |
 | `src/lib/hooks`, `src/lib/context`, `src/lib/util` | React hooks, context providers, and formatting/URL utilities. |
-| `src/modules/<domain>/{components,templates}` | UI feature modules: `cart`, `checkout`, `account`, `order`, `products`, `categories`, `collections`, `store`, `layout`, `home`, `shipping`, `skeletons`, `common`. |
+| `src/modules/<domain>/{components,templates}` | UI feature modules: `cart`, `checkout`, `checkout-new`, `account`, `order`, `products`, `categories`, `collections`, `store`, `layout`, `home`, `shipping`, `skeletons`, `common`. `checkout-new` is the `NEXT_PUBLIC_CHECKOUT_VARIANT=new`-gated 3-step checkout flow; it does not modify anything under `checkout`. |
 
 ## Data access pattern
 
@@ -48,10 +48,6 @@ Per the `medusa-dev:building-storefronts` skill's rules, any new storefront code
 ## Payments in the UI
 
 Stripe Elements is mounted conditionally based on the cart's active payment session provider (`isStripeLike` / `isManual` in `src/lib/constants.tsx`). See [../domains/payments.md](../domains/payments.md).
-
-## Known issue in current working tree
-
-`src/app/[countryCode]/(checkout)/checkout/page.tsx` currently contains three uncommitted debug `console.log` statements logging the cart and customer objects. Treat this as accidental debug output pending cleanup, not intended behaviour — see [../project/current-status.md](../project/current-status.md).
 
 ## Testing
 

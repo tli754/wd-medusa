@@ -16,6 +16,8 @@ related:
 
 For the full request-by-request trace (route → workflow → persistence → events), see [../workflows/checkout.md](../workflows/checkout.md). This document covers the domain rules.
 
+> A second checkout flow (Details → Shipping → Payment, `apps/storefront/src/modules/checkout-new`) exists alongside the flow described below, gated behind `NEXT_PUBLIC_CHECKOUT_VARIANT=new`. See [../execution/specs/2026-09-12-custom-checkout-design.md](../execution/specs/2026-09-12-custom-checkout-design.md) for its design. Everything below describes the legacy (default) flow.
+
 ## Entities
 
 - **Cart** — Medusa core entity. Identified client-side by a cookie (`getCartId`/`setCartId` in `apps/storefront/src/lib/data/cookies.ts`). Created lazily per region by `getOrSetCart()` in `apps/storefront/src/lib/data/cart.ts`.

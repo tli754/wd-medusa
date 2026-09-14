@@ -18,11 +18,11 @@ related:
 
 This traces the actual runtime path for checkout in this repository. There is no custom Medusa workflow for checkout — the "workflow" here is the storefront's orchestration of Medusa's core store API (cart, payment, order) across a Next.js page and one Route Handler.
 
+> A second checkout flow (Details → Shipping → Payment, `apps/storefront/src/modules/checkout-new`) exists alongside the flow traced below, gated behind `NEXT_PUBLIC_CHECKOUT_VARIANT=new`. See [../execution/specs/2026-09-12-custom-checkout-design.md](../execution/specs/2026-09-12-custom-checkout-design.md) for its design; the trace below covers only the legacy (default) flow.
+
 ## 1. Where the request originates
 
-The shopper reaches `apps/storefront/src/app/[countryCode]/(checkout)/checkout/page.tsx` after adding items to a cart and navigating to checkout. The page is a React Server Component that loads the cart (`retrieveCart` / `retrieveCustomer`) and renders `CheckoutForm` (`apps/storefront/src/modules/checkout/templates/checkout-form`) with step components for addresses, shipping, and payment (`apps/storefront/src/modules/checkout/components/{addresses,shipping,payment,review}`).
-
-> Note: this page currently contains three uncommitted debug `console.log(cart)` / `console.log(customer)` statements — not part of the intended flow (see [../project/current-status.md](../project/current-status.md)).
+The shopper reaches `apps/storefront/src/app/[countryCode]/(checkout)/checkout/page.tsx` after adding items to a cart and navigating to checkout. The page is a React Server Component that loads the cart (`retrieveCart` / `retrieveCustomer`) and, for the legacy flow, renders `CheckoutForm` (`apps/storefront/src/modules/checkout/templates/checkout-form`) with step components for addresses, shipping, and payment (`apps/storefront/src/modules/checkout/components/{addresses,shipping,payment,review}`).
 
 ## 2. API endpoint(s) involved
 
