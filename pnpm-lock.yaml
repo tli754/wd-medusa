@@ -57,6 +57,9 @@ importers:
       '@medusajs/ui':
         specifier: 4.2.3
         version: 4.2.3(@types/react-dom@19.0.5(@types/react@19.0.5))(@types/react@19.0.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)
+      '@rx-ventures/medusa-plugin-shopify-sync':
+        specifier: ^0.4.8
+        version: 0.4.8(@medusajs/admin-sdk@2.20.1)(@medusajs/cli@2.20.1(@types/node@20.19.43))(@medusajs/framework@2.20.1(@medusajs/cli@2.20.1(@types/node@20.19.43))(@types/node@20.19.43)(ioredis@5.11.1)(vite@7.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.0)(yaml@2.9.0))(zod@4.2.0))(@medusajs/icons@2.20.1(react@18.3.1))(@medusajs/medusa@2.20.1)(@medusajs/test-utils@2.20.1)(@medusajs/ui@4.2.3(@types/react-dom@19.0.5(@types/react@19.0.5))(@types/react@19.0.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))
       '@tanstack/react-query':
         specifier: 5.64.2
         version: 5.64.2(react@18.3.1)
@@ -3354,6 +3357,18 @@ packages:
 
   '@rushstack/ts-command-line@4.23.7':
     resolution: {integrity: sha512-Gr9cB7DGe6uz5vq2wdr89WbVDKz0UeuFEn5H2CfWDe7JvjFFaiV15gi6mqDBTbHhHCWS7w8mF1h3BnIfUndqdA==}
+
+  '@rx-ventures/medusa-plugin-shopify-sync@0.4.8':
+    resolution: {integrity: sha512-zE+LZX3nQ1foQQ1SaHx2F0Wo5AcqF6KwDk1eg4HDj2vWVLDQr6maMZLmxTBSRD1JPqZRB3iMpMXMu2Y32fJlQg==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@medusajs/admin-sdk': ^2.13.0
+      '@medusajs/cli': ^2.13.0
+      '@medusajs/framework': ^2.13.0
+      '@medusajs/icons': ^2.13.0
+      '@medusajs/medusa': ^2.13.0
+      '@medusajs/test-utils': ^2.13.0
+      '@medusajs/ui': ^4.0.31
 
   '@sendgrid/client@8.1.6':
     resolution: {integrity: sha512-/BHu0hqwXNHr2aLhcXU7RmmlVqrdfrbY9KpaNj00KZHlVOVoRxRVrpOCabIB+91ISXJ6+mLM9vpaVUhK6TwBWA==}
@@ -11782,6 +11797,16 @@ snapshots:
       string-argv: 0.3.2
     transitivePeerDependencies:
       - '@types/node'
+
+  '@rx-ventures/medusa-plugin-shopify-sync@0.4.8(@medusajs/admin-sdk@2.20.1)(@medusajs/cli@2.20.1(@types/node@20.19.43))(@medusajs/framework@2.20.1(@medusajs/cli@2.20.1(@types/node@20.19.43))(@types/node@20.19.43)(ioredis@5.11.1)(vite@7.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.0)(yaml@2.9.0))(zod@4.2.0))(@medusajs/icons@2.20.1(react@18.3.1))(@medusajs/medusa@2.20.1)(@medusajs/test-utils@2.20.1)(@medusajs/ui@4.2.3(@types/react-dom@19.0.5(@types/react@19.0.5))(@types/react@19.0.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))':
+    dependencies:
+      '@medusajs/admin-sdk': 2.20.1
+      '@medusajs/cli': 2.20.1(@types/node@20.19.43)
+      '@medusajs/framework': 2.20.1(@medusajs/cli@2.20.1(@types/node@20.19.43))(@types/node@20.19.43)(ioredis@5.11.1)(vite@7.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.0)(yaml@2.9.0))(zod@4.2.0)
+      '@medusajs/icons': 2.20.1(react@18.3.1)
+      '@medusajs/medusa': 2.20.1(38ce98640fd5aab33aca73212e49cf43)
+      '@medusajs/test-utils': 2.20.1(@medusajs/core-flows@2.20.1(@medusajs/framework@2.20.1(@medusajs/cli@2.20.1(@types/node@20.19.43))(@types/node@20.19.43)(ioredis@5.11.1)(vite@7.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.0)(yaml@2.9.0))(zod@4.2.0)))(@medusajs/framework@2.20.1(@medusajs/cli@2.20.1(@types/node@20.19.43))(@types/node@20.19.43)(ioredis@5.11.1)(vite@7.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.0)(yaml@2.9.0))(zod@4.2.0))(@medusajs/medusa@2.20.1)
+      '@medusajs/ui': 4.2.3(@types/react-dom@19.0.5(@types/react@19.0.5))(@types/react@19.0.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)
 
   '@sendgrid/client@8.1.6':
     dependencies:

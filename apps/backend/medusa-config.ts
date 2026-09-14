@@ -12,5 +12,15 @@ module.exports = defineConfig({
       jwtSecret: process.env.JWT_SECRET,
       cookieSecret: process.env.COOKIE_SECRET,
     }
-  }
+  },
+  plugins: [
+    {
+      resolve: "@rx-ventures/medusa-plugin-shopify-sync",
+      options: {
+        encryption_key: process.env.SHOPIFY_SYNC_ENCRYPTION_KEY,
+        // shopify_api_version: "2026-01"     // override Shopify Admin GraphQL version
+        // webhook_base_url: process.env.MEDUSA_BACKEND_URL  // for webhook auto-registration
+      },
+    },
+  ],
 })
