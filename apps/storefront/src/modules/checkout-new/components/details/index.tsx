@@ -7,22 +7,21 @@ import ErrorMessage from "@modules/checkout/components/error-message"
 import Divider from "@modules/common/components/divider"
 import Input from "@modules/common/components/input"
 import { Button, Heading, Text } from "@modules/common/components/ui"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 const Details = ({
   cart,
   customer,
+  isOpen,
+  onEdit,
+  onContinue,
 }: {
   cart: HttpTypes.StoreCart
   customer: HttpTypes.StoreCustomer | null
+  isOpen: boolean
+  onEdit: () => void
+  onContinue: () => void
 }) => {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const pathname = usePathname()
-
-  const isOpen = searchParams.get("step") === "address"
-
   const metadata = (cart.metadata ?? {}) as Record<string, string>
 
   const [fullName, setFullName] = useState(
@@ -43,10 +42,6 @@ const Details = ({
     metadata.checkout_full_name &&
     metadata.checkout_phone
   )
-
-  const handleEdit = () => {
-    router.push(pathname + "?step=address", { scroll: false })
-  }
 
   const handleSubmit = async () => {
     if (!fullName.trim() || !email.trim() || !phone.trim()) {
@@ -83,7 +78,7 @@ const Details = ({
           : {}),
       })
 
-      router.push(pathname + "?step=delivery", { scroll: false })
+      onContinue()
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
     } finally {
@@ -104,7 +99,7 @@ const Details = ({
         {!isOpen && isComplete && (
           <Text>
             <button
-              onClick={handleEdit}
+              onClick={onEdit}
               className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
               data-testid="edit-details-button"
             >

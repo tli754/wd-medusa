@@ -14,16 +14,21 @@ import Divider from "@modules/common/components/divider"
 import Input from "@modules/common/components/input"
 import MedusaRadio from "@modules/common/components/radio"
 import { Button, Heading, Text, clx } from "@modules/common/components/ui"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
-const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const pathname = usePathname()
-
-  const isOpen = searchParams.get("step") === "delivery"
-
+const Shipping = ({
+  cart,
+  isOpen,
+  onEdit,
+  onBack,
+  onContinue,
+}: {
+  cart: HttpTypes.StoreCart
+  isOpen: boolean
+  onEdit: () => void
+  onBack: () => void
+  onContinue: () => void
+}) => {
   const [streetAddress, setStreetAddress] = useState(
     cart.shipping_address?.address_1 ?? ""
   )
@@ -58,14 +63,6 @@ const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
   const hasContactInfo = !!(
     metadata.checkout_full_name && metadata.checkout_phone
   )
-
-  const handleEdit = () => {
-    router.push(pathname + "?step=delivery", { scroll: false })
-  }
-
-  const handleBackToDetails = () => {
-    router.push(pathname + "?step=address", { scroll: false })
-  }
 
   const fetchOptionsAndPrices = async () => {
     const options = await listCartShippingMethods(cart.id)
@@ -153,10 +150,6 @@ const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
       .finally(() => setIsSelecting(false))
   }
 
-  const handleContinue = () => {
-    router.push(pathname + "?step=payment", { scroll: false })
-  }
-
   return (
     <div className="bg-white">
       <div className="flex flex-row items-center justify-between mb-6">
@@ -173,7 +166,7 @@ const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
         {!isOpen && isComplete && (
           <Text>
             <button
-              onClick={handleEdit}
+              onClick={onEdit}
               className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
               data-testid="edit-shipping-button"
             >
@@ -190,7 +183,7 @@ const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
               address.
             </Text>
             <button
-              onClick={handleBackToDetails}
+              onClick={onBack}
               className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
               data-testid="back-to-details-button"
             >
@@ -305,7 +298,7 @@ const Shipping = ({ cart }: { cart: HttpTypes.StoreCart }) => {
           <Button
             size="large"
             className="mt-6"
-            onClick={handleContinue}
+            onClick={onContinue}
             isLoading={isSelecting}
             disabled={!cart.shipping_methods?.length}
             data-testid="submit-shipping-button"

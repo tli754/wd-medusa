@@ -11,15 +11,17 @@ import PaymentContainer, {
 } from "@modules/checkout/components/payment-container"
 import Divider from "@modules/common/components/divider"
 import { Heading, Text, clx } from "@modules/common/components/ui"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 const Payment = ({
   cart,
   availablePaymentMethods,
+  isOpen,
 }: {
   cart: HttpTypes.StoreCart
   availablePaymentMethods: { id: string }[]
+  isOpen: boolean
 }) => {
   const activeSession = cart.payment_collection?.payment_sessions?.find(
     (paymentSession) => paymentSession.status === "pending"
@@ -32,10 +34,7 @@ const Payment = ({
   const [error, setError] = useState<string | null>(null)
   const [isInitiating, setIsInitiating] = useState(false)
 
-  const searchParams = useSearchParams()
   const router = useRouter()
-
-  const isOpen = searchParams.get("step") === "payment"
 
   const setPaymentMethod = async (method: string) => {
     const previousMethod = selectedPaymentMethod
@@ -46,7 +45,7 @@ const Payment = ({
     setIsInitiating(true)
     try {
       await initiatePaymentSession(cart, { provider_id: method })
-      // This step never navigates to a new `?step=`, so nothing else
+      // Step transitions are local state now, so nothing else navigates or
       // forces the Server Component tree to refetch `cart`. Without this,
       // PaymentWrapper's Stripe Elements client secret and PaymentButton's
       // cart prop would stay stale (missing the session just created).
