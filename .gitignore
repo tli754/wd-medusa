@@ -57,3 +57,5 @@ Thumbs.db
 **/.DS_Store
 .idea
 docs/execution
+*.tsbuildinfo
+.claude
