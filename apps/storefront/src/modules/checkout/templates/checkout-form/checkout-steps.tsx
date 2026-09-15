@@ -1,9 +1,9 @@
 "use client"
 
 import { HttpTypes } from "@medusajs/types"
-import Details from "@modules/checkout-new/components/details"
-import Payment from "@modules/checkout-new/components/payment"
-import Shipping from "@modules/checkout-new/components/shipping"
+import Details from "@modules/checkout/components/details"
+import Payment from "@modules/checkout/components/payment"
+import Shipping from "@modules/checkout/components/shipping"
 import { useState } from "react"
 
 type Step = "address" | "delivery" | "payment"

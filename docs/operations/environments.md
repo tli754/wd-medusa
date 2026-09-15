@@ -29,7 +29,7 @@ Their actual values are not, and must never be, recorded in this documentation.
 
 **Backend** (`apps/backend/.env.template`): `STORE_CORS`, `ADMIN_CORS`, `AUTH_CORS`, `REDIS_URL`, `JWT_SECRET`, `COOKIE_SECRET`, `DATABASE_URL`, `DB_NAME`. Additionally, if the Shopify sync plugin is enabled: `SHOPIFY_SYNC_ENCRYPTION_KEY` (not yet in `.env.template` — see [../architecture/integrations.md](../architecture/integrations.md)).
 
-**Storefront** (`apps/storefront/.env.template`): `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`, `NEXT_PUBLIC_MEDUSA_BACKEND_URL`, `NEXT_PUBLIC_DEFAULT_REGION`, `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_STRIPE_KEY`, `NEXT_PUBLIC_CHECKOUT_VARIANT` (unset or `legacy` = original 4-step checkout flow, `new` = the 3-step Details → Shipping → Payment flow under `src/modules/checkout-new`; see [../execution/specs/2026-09-12-custom-checkout-design.md](../execution/specs/2026-09-12-custom-checkout-design.md)), `MEDUSA_CLOUD_S3_HOSTNAME`, `MEDUSA_CLOUD_S3_PATHNAME`, `NODE_ENV`.
+**Storefront** (`apps/storefront/.env.template`): `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`, `NEXT_PUBLIC_MEDUSA_BACKEND_URL`, `NEXT_PUBLIC_DEFAULT_REGION`, `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_STRIPE_KEY`, `MEDUSA_CLOUD_S3_HOSTNAME`, `MEDUSA_CLOUD_S3_PATHNAME`, `NODE_ENV`.
 
 ## Open questions
 

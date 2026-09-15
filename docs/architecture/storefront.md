@@ -24,13 +24,13 @@ related:
 | Path | Responsibility |
 |---|---|
 | `src/app/[countryCode]/(main)/...` | Public browsing routes: home, products, collections, categories, cart, account, order. |
-| `src/app/[countryCode]/(checkout)/checkout/page.tsx` | The checkout page. Renders one of two switchable flows based on `NEXT_PUBLIC_CHECKOUT_VARIANT`: the original 4-step flow (address → shipping → payment → review, `src/modules/checkout`) by default, or a 3-step flow (details → shipping → payment, `src/modules/checkout-new`) when set to `"new"`. See [../execution/specs/2026-09-12-custom-checkout-design.md](../execution/specs/2026-09-12-custom-checkout-design.md). |
+| `src/app/[countryCode]/(checkout)/checkout/page.tsx` | The checkout page. Renders the 3-step Details → Shipping → Payment flow (`src/modules/checkout`). An earlier 4-step flow (address → shipping → payment → review) and the `NEXT_PUBLIC_CHECKOUT_VARIANT` switch between them were removed 2026-09-15 once the 3-step flow was validated — see [../execution/specs/2026-09-12-custom-checkout-design.md](../execution/specs/2026-09-12-custom-checkout-design.md) for the original design. |
 | `src/app/api/payment-return/route.ts` | A Next.js Route Handler that Stripe redirects back to after off-site payment authorization; completes the cart into an order. See [../workflows/checkout.md](../workflows/checkout.md). |
 | `src/middleware.ts` | Runs on every request (Next.js Edge middleware); resolves the visitor's region from `/store/regions` and redirects to a country-code-prefixed path (e.g. `/` → `/dk`), caching the region map for one hour. |
 | `src/lib/config.ts` | Instantiates the single `@medusajs/js-sdk` client (`sdk`) used for all backend calls; wraps `sdk.client.fetch` to also forward a locale header. |
 | `src/lib/data/*.ts` | Server actions/functions per domain (`cart.ts`, `customer.ts`, `orders.ts`, `products.ts`, `payment.ts`, `fulfillment.ts`, `regions.ts`, `collections.ts`, `categories.ts`, `variants.ts`, `onboarding.ts`, `cookies.ts`, `locales.ts`). Each wraps `sdk.client.fetch` or `sdk.store.*` calls; most are marked `"use server"`. |
 | `src/lib/hooks`, `src/lib/context`, `src/lib/util` | React hooks, context providers, and formatting/URL utilities. |
-| `src/modules/<domain>/{components,templates}` | UI feature modules: `cart`, `checkout`, `checkout-new`, `account`, `order`, `products`, `categories`, `collections`, `store`, `layout`, `home`, `shipping`, `skeletons`, `common`. `checkout-new` is the `NEXT_PUBLIC_CHECKOUT_VARIANT=new`-gated 3-step checkout flow; it does not modify anything under `checkout`. |
+| `src/modules/<domain>/{components,templates}` | UI feature modules: `cart`, `checkout`, `account`, `order`, `products`, `categories`, `collections`, `store`, `layout`, `home`, `shipping`, `skeletons`, `common`. |
 
 ## Data access pattern
 

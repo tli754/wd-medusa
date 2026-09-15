@@ -16,7 +16,7 @@ related:
 
 For the full request-by-request trace (route → workflow → persistence → events), see [../workflows/checkout.md](../workflows/checkout.md). This document covers the domain rules.
 
-> A second checkout flow (Details → Shipping → Payment, `apps/storefront/src/modules/checkout-new`) exists alongside the flow described below, gated behind `NEXT_PUBLIC_CHECKOUT_VARIANT=new`. See [../execution/specs/2026-09-12-custom-checkout-design.md](../execution/specs/2026-09-12-custom-checkout-design.md) for its design. Everything below describes the legacy (default) flow.
+> Checkout is a single 3-step flow: Details → Shipping → Payment (`apps/storefront/src/modules/checkout`). An earlier 4-step flow and the `NEXT_PUBLIC_CHECKOUT_VARIANT` switch between them were removed 2026-09-15 after the 3-step flow was validated; see [../execution/specs/2026-09-12-custom-checkout-design.md](../execution/specs/2026-09-12-custom-checkout-design.md) for the original design record.
 
 ## Entities
 
